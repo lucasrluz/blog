@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 import com.api.blog.model.UserModel;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserModel, UUID> {}
+public interface UserRepository extends JpaRepository<UserModel, UUID> {
+    public boolean existsByEmail(String email);
+}
