@@ -1,0 +1,69 @@
+package com.api.blog.domain;
+
+import java.util.Set;
+
+import com.api.blog.domain.exceptions.InvalidDomainDataException;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+public class UserDomain {
+    @NotBlank
+    private String name;
+    
+    @Email
+    @NotBlank
+    private String email;
+    
+    @NotBlank
+    private String password;
+
+    private UserDomain(@NotBlank String name, @Email String email, @NotBlank String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public static UserDomain validate(String name, String email, String password) throws InvalidDomainDataException {
+        try {
+            UserDomain userDomain = new UserDomain(name, email, password);
+
+            validation(userDomain);
+
+            return userDomain;
+        } catch (ConstraintViolationException exception) {
+            String errorMessage = exception.getMessage();
+            
+            throw new InvalidDomainDataException(errorMessage);
+        }
+    }
+
+    private static void validation(UserDomain userDomain) {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        final Validator validator = validatorFactory.getValidator();
+
+        Set<ConstraintViolation<UserDomain>> constraintViolations = validator.validate(userDomain);
+
+        if (!constraintViolations.isEmpty()) {
+            throw new ConstraintViolationException(constraintViolations);
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+}
+
