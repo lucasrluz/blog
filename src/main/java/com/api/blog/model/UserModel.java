@@ -24,6 +24,8 @@ public class UserModel {
 
     @Column(nullable = false)
     private String password;
+    
+    public UserModel() {}
 
     public UserModel(String name, String email, String password) {
         this.name = name;
