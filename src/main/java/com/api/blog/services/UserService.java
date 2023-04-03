@@ -1,5 +1,7 @@
 package com.api.blog.services;
 
+import org.springframework.stereotype.Service;
+
 import com.api.blog.domain.UserDomain;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
 import com.api.blog.dto.UserDTO;
@@ -7,6 +9,7 @@ import com.api.blog.model.UserModel;
 import com.api.blog.repositories.UserRepository;
 import com.api.blog.services.util.BadRequestException;
 
+@Service
 public class UserService {
     private final UserRepository userRepository;
 
