@@ -10,12 +10,13 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
-import com.api.blog.dto.UserDTO;
+import com.api.blog.dto.UserDTORequest;
+import com.api.blog.dto.UserDTOResponse;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.UserRepository;
 import com.api.blog.services.UserService;
 import com.api.blog.services.util.BadRequestException;
-import com.api.blog.unit.util.builders.UserDTOBuilder;
+import com.api.blog.unit.util.builders.UserDTORequestBuilder;
 import com.api.blog.unit.util.builders.UserModelBuilder;
 
 @ExtendWith(SpringExtension.class)
@@ -33,23 +34,23 @@ public class UserServiceTests {
         UserModel userModel = UserModelBuilder.createValidUserModel();
         BDDMockito.when(userRepository.save(ArgumentMatchers.any())).thenReturn(userModel);
     
-        UserDTO userDTO = UserDTOBuilder.createValidUserDTO();
-        UserModel response = userService.save(userDTO);
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
+        UserDTOResponse response = userService.save(userDTORequest);
 
-        Assertions.assertThat(response.getUserId()).isNotEqualTo(null);
-        Assertions.assertThat(response.getName()).isEqualTo(userModel.getName());
-        Assertions.assertThat(response.getEmail()).isEqualTo(userModel.getEmail());
-        Assertions.assertThat(response.getPassword()).isEqualTo(userModel.getPassword());
+        Assertions.assertThat(response.userId).isNotEqualTo(null);
+        Assertions.assertThat(response.name).isEqualTo(userModel.getName());
+        Assertions.assertThat(response.email).isEqualTo(userModel.getEmail());
+        Assertions.assertThat(response.password).isEqualTo(userModel.getPassword());
     }
 
     @Test
     public void esperoQueRetorneUmErro() throws InvalidDomainDataException, BadRequestException {
         BDDMockito.when(userRepository.existsByEmail(ArgumentMatchers.any())).thenReturn(true);
     
-        UserDTO userDTO = UserDTOBuilder.createValidUserDTO();
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-            .isThrownBy(() -> userService.save(userDTO))
+            .isThrownBy(() -> userService.save(userDTORequest))
             .withMessage("Error: Este e-mail já está cadastrado");
     }
 }

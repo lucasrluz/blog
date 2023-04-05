@@ -13,12 +13,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.api.blog.controllers.UserController;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
-import com.api.blog.dto.UserDTO;
-import com.api.blog.model.UserModel;
+import com.api.blog.dto.UserDTORequest;
+import com.api.blog.dto.UserDTOResponse;
 import com.api.blog.services.UserService;
 import com.api.blog.services.util.BadRequestException;
-import com.api.blog.unit.util.builders.UserDTOBuilder;
-import com.api.blog.unit.util.builders.UserModelBuilder;
+import com.api.blog.unit.util.builders.UserDTORequestBuilder;
+import com.api.blog.unit.util.builders.UserDTOResponseBuilder;
 
 @ExtendWith(SpringExtension.class)
 public class UserControllerTests {
@@ -30,14 +30,15 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueRetorneUmCodigoDeStatus201EONovoUsuarioCriado() throws InvalidDomainDataException, BadRequestException {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
-        BDDMockito.when(userService.save(ArgumentMatchers.any())).thenReturn(userModel);
+        UserDTOResponse userDTOResponse = UserDTOResponseBuilder.createValidUserDTO();
+        BDDMockito.when(userService.save(ArgumentMatchers.any())).thenReturn(userDTOResponse);
 
-        UserDTO userDTO = UserDTOBuilder.createValidUserDTO();
-        ResponseEntity<Object> responseEntity = this.userController.save(userDTO);
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
+
+        ResponseEntity<Object> responseEntity = this.userController.save(userDTORequest);
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userModel);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOResponse);
     }
 
     @Test
@@ -45,8 +46,8 @@ public class UserControllerTests {
         InvalidDomainDataException invalidDomainDataException = new InvalidDomainDataException("name: must not be blank");
         BDDMockito.when(userService.save(ArgumentMatchers.any())).thenThrow(invalidDomainDataException);
         
-        UserDTO userDTO = UserDTOBuilder.createValidUserDTO();
-        ResponseEntity<Object> responseEntity = this.userController.save(userDTO);
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
+        ResponseEntity<Object> responseEntity = this.userController.save(userDTORequest);
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         Assertions.assertThat(responseEntity.getBody()).isEqualTo("name: must not be blank");
@@ -57,8 +58,8 @@ public class UserControllerTests {
         BadRequestException badRequestException = new BadRequestException("Error: Este e-mail já está cadastrado");
         BDDMockito.when(userService.save(ArgumentMatchers.any())).thenThrow(badRequestException);
         
-        UserDTO userDTO = UserDTOBuilder.createValidUserDTO();
-        ResponseEntity<Object> responseEntity = this.userController.save(userDTO);
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
+        ResponseEntity<Object> responseEntity = this.userController.save(userDTORequest);
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         Assertions.assertThat(responseEntity.getBody()).isEqualTo("Error: Este e-mail já está cadastrado");

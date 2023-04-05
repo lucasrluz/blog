@@ -7,10 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.api.blog.dto.UserDTO;
+import com.api.blog.dto.UserDTORequest;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.UserRepository;
-import com.api.blog.unit.util.builders.UserDTOBuilder;
+import com.api.blog.unit.util.builders.UserDTORequestBuilder;
 import com.api.blog.unit.util.builders.UserModelBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,52 +38,52 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueRetorneUmCodigoDeStatus201EONovoUsuarioSalvo() throws Exception {
-        UserDTO userDTO = UserDTOBuilder.createValidUserDTO();
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
 
         this.mockMvc.perform(
             post("/user")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(userDTO)))
+            .content(asJsonString(userDTORequest)))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("name", is(userDTO.name)))
-            .andExpect(jsonPath("email", is(userDTO.email)))
-            .andExpect(jsonPath("password", is(userDTO.password)));
+            .andExpect(jsonPath("name", is(userDTORequest.name)))
+            .andExpect(jsonPath("email", is(userDTORequest.email)))
+            .andExpect(jsonPath("password", is(userDTORequest.password)));
         
         this.userRepository.deleteAll();
     }
 
     @Test
     public void esperoQueRetorneUmCodigoDeStatus401ComUmMensagemDeErroDadoUmNomeInvalido() throws Exception {
-        UserDTO userDTO = UserDTOBuilder.createUserDTOWithInvalidName();
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createUserDTORequestWithInvalidName();
 
         this.mockMvc.perform(
             post("/user")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(userDTO)))
+            .content(asJsonString(userDTORequest)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$", is("name: must not be blank")));
     }
 
     @Test
     public void esperoQueRetorneUmCodigoDeStatus401ComUmMensagemDeErroDadoUmEmailInvalido() throws Exception {
-        UserDTO userDTO = UserDTOBuilder.createUserDTOWithInvalidEmail();
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createUserDTORequestWithInvalidEmail();
 
         this.mockMvc.perform(
             post("/user")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(userDTO)))
+            .content(asJsonString(userDTORequest)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$", is("email: must be a well-formed email address")));
     }
 
     @Test
     public void esperoQueRetorneUmCodigoDeStatus401ComUmMensagemDeErroDadoUmaSenhaInvalida() throws Exception {
-        UserDTO userDTO = UserDTOBuilder.createUserDTOWithInvalidPassword();
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createUserDTORequestWithInvalidPassword();
 
         this.mockMvc.perform(
             post("/user")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(userDTO)))
+            .content(asJsonString(userDTORequest)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$", is("password: must not be blank")));
     }
@@ -94,12 +94,12 @@ public class UserControllerTests {
 
         this.userRepository.save(userModel);
         
-        UserDTO userDTO = UserDTOBuilder.createValidUserDTO();
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
 
         this.mockMvc.perform(
             post("/user")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(userDTO)))
+            .content(asJsonString(userDTORequest)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$", is("Error: Este e-mail já está cadastrado")));
         
