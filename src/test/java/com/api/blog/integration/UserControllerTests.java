@@ -15,6 +15,7 @@ import com.api.blog.unit.util.builders.UserModelBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.CoreMatchers.is;
@@ -104,5 +105,36 @@ public class UserControllerTests {
             .andExpect(jsonPath("$", is("Error: Este e-mail já está cadastrado")));
         
         this.userRepository.deleteAll();
+    }
+
+    // GET /user/{id}
+
+    @Test
+    public void esperoQueRetorneUmUsuarioDeAcordoComOIdPassado() throws Exception {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
+
+        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
+
+        String url = "/user/" + saveUserModelResponse.getUserId();
+
+        this.mockMvc
+            .perform(get(url))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("userId", is(saveUserModelResponse.getUserId().toString())))
+            .andExpect(jsonPath("name", is(userDTORequest.name)))
+            .andExpect(jsonPath("email", is(userDTORequest.email)))
+            .andExpect(jsonPath("password", is(userDTORequest.password)));
+        
+        this.userRepository.deleteAll();
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDeBadRequestPeloIdInvalido() throws Exception {
+        this.mockMvc
+            .perform(get("/user/7f4baffd-96f8-4b5a-b1de-84437519ffc2"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$", is("Error: Usuário não encontrado")));
     }
 }
