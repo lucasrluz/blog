@@ -1,5 +1,7 @@
 package com.api.blog.unit.service;
 
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,5 +54,32 @@ public class UserServiceTests {
         Assertions.assertThatExceptionOfType(BadRequestException.class)
             .isThrownBy(() -> userService.save(userDTORequest))
             .withMessage("Error: Este e-mail já está cadastrado");
+    }
+
+    // userService.findById
+
+    @Test
+    public void esperoQueRetorneUmUsuarioPeloIdInformado() throws BadRequestException {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        Optional<UserModel> userOptional = Optional.of(userModel);
+        BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
+
+        UserDTOResponse response = userService.getByUserId(userModel.getUserId().toString());
+
+        Assertions.assertThat(response.userId).isNotEqualTo(null);
+        Assertions.assertThat(response.name).isEqualTo(userModel.getName());
+        Assertions.assertThat(response.email).isEqualTo(userModel.getEmail());
+        Assertions.assertThat(response.password).isEqualTo(userModel.getPassword());
+    }
+
+    @Test
+    public void esperoQueRetorneUmBadRequestExceptionPorNaoTerEncontradoOUsuario() throws BadRequestException {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        Optional<UserModel> userOptional = Optional.empty();
+        BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+            .isThrownBy(() -> userService.getByUserId(userModel.getUserId().toString()))
+            .withMessage("Error: Usuário não encontrado");
     }
 }

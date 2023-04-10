@@ -1,5 +1,7 @@
 package com.api.blog.unit.controller;
 
+import java.util.UUID;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,5 +65,30 @@ public class UserControllerTests {
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         Assertions.assertThat(responseEntity.getBody()).isEqualTo("Error: Este e-mail já está cadastrado");
+    }
+
+    // GET /user/{id}
+
+    @Test
+    public void esperoQueRetornOUsuarioCorretoPeloId() throws BadRequestException {
+        UserDTOResponse userDTOResponse = UserDTOResponseBuilder.createValidUserDTO();
+        BDDMockito.when(userService.getByUserId(ArgumentMatchers.any())).thenReturn(userDTOResponse);
+
+        ResponseEntity<Object> responseEntity = this.userController.getByUserId(userDTOResponse.userId.toString());
+
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOResponse);
+    }
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus401ComUmaExcecaoBadRequestDadoUmIdInvalido() throws InvalidDomainDataException, BadRequestException {
+        BadRequestException badRequestException = new BadRequestException("Error: Usuário não encontrado");
+        BDDMockito.when(userService.getByUserId(ArgumentMatchers.any())).thenThrow(badRequestException);
+        
+        UUID userId = UserDTOResponseBuilder.createValidUserDTO().userId;
+        ResponseEntity<Object> responseEntity = this.userController.getByUserId(userId.toString());
+
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo("Error: Usuário não encontrado");
     }
 }
