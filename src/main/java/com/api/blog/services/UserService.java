@@ -1,5 +1,8 @@
 package com.api.blog.services;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.api.blog.domain.UserDomain;
@@ -34,5 +37,22 @@ public class UserService {
             saveUserModelResponse.getName(),
             saveUserModelResponse.getEmail(),
             saveUserModelResponse.getPassword());
+    }
+
+    public UserDTOResponse getByUserId(String userId) throws BadRequestException {
+        UUID uuid = UUID.fromString(userId);
+
+        Optional<UserModel> findUserModelByUserIdResponse = this.userRepository.findById(uuid);
+
+        if (findUserModelByUserIdResponse.isEmpty()) {
+            throw new BadRequestException("Error: Usuário não encontrado");
+        }
+        
+        return new UserDTOResponse(
+            findUserModelByUserIdResponse.get().getUserId(),
+            findUserModelByUserIdResponse.get().getName(),
+            findUserModelByUserIdResponse.get().getEmail(),
+            findUserModelByUserIdResponse.get().getPassword()
+        );
     }
 }
