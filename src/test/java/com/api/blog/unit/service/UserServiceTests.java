@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
+import com.api.blog.dto.UserDTOEditRequest;
+import com.api.blog.dto.UserDTOEditResponse;
 import com.api.blog.dto.UserDTORequest;
 import com.api.blog.dto.UserDTOResponse;
 import com.api.blog.model.UserModel;
@@ -82,4 +84,92 @@ public class UserServiceTests {
             .isThrownBy(() -> userService.getByUserId(userModel.getUserId().toString()))
             .withMessage("Error: Usuário não encontrado");
     }
+
+    // userService.edit
+
+    @Test
+    public void esperoQueEditeONomeDoUsuarioPeloId() throws BadRequestException {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        Optional<UserModel> userOptional = Optional.of(userModel);
+        BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
+
+        userModel.setName("new name");
+
+        BDDMockito.when(this.userRepository.save(ArgumentMatchers.any())).thenReturn(userModel);
+
+        UserDTOEditRequest userDTOEditRequest = new UserDTOEditRequest(
+            userModel.getUserId().toString(),
+            "new name",
+            userModel.getEmail(),
+            userModel.getPassword()
+        );
+
+        UserDTOEditResponse response = userService.edit(userDTOEditRequest);
+
+        Assertions.assertThat(response.userId).isEqualTo(userDTOEditRequest.userId);
+        Assertions.assertThat(response.newName).isEqualTo(userDTOEditRequest.newName);
+        Assertions.assertThat(response.email).isEqualTo(userDTOEditRequest.email);
+        Assertions.assertThat(response.password).isEqualTo(userDTOEditRequest.password);
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDeUsuarioNaoEncontrado() throws BadRequestException {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        Optional<UserModel> userOptional = Optional.empty();
+        BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
+
+        userModel.setName("new name");
+
+        UserDTOEditRequest userDTOEditRequest = new UserDTOEditRequest(
+            userModel.getUserId().toString(),
+            "new name",
+            userModel.getEmail(),
+            userModel.getPassword()
+        );
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+            .isThrownBy(() -> userService.edit(userDTOEditRequest))
+            .withMessage("Error: Usuário não encontrado");
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDeEmailOuSenhaInvalidaDadoUmSenhaInvalida() throws BadRequestException {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        Optional<UserModel> userOptional = Optional.of(userModel);
+        BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
+
+        userModel.setName("new name");
+
+        UserDTOEditRequest userDTOEditRequest = new UserDTOEditRequest(
+            userModel.getUserId().toString(),
+            "new name",
+            userModel.getEmail(),
+            "invalidpassword"
+        );
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+            .isThrownBy(() -> userService.edit(userDTOEditRequest))
+            .withMessage("Error: E-mail ou senha inválida");
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDeEmailOuSenhaInvalidaDadoUmEmailInvalido() throws BadRequestException {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        Optional<UserModel> userOptional = Optional.of(userModel);
+        BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
+
+        userModel.setName("new name");
+
+        UserDTOEditRequest userDTOEditRequest = new UserDTOEditRequest(
+            userModel.getUserId().toString(),
+            "new name",
+            "invalidemail@gmail.com",
+            userModel.getPassword()
+        );
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+            .isThrownBy(() -> userService.edit(userDTOEditRequest))
+            .withMessage("Error: E-mail ou senha inválida");
+    }
+
 }

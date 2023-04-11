@@ -15,10 +15,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.api.blog.controllers.UserController;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
+import com.api.blog.dto.UserDTOEditRequest;
+import com.api.blog.dto.UserDTOEditResponse;
 import com.api.blog.dto.UserDTORequest;
 import com.api.blog.dto.UserDTOResponse;
 import com.api.blog.services.UserService;
 import com.api.blog.services.util.BadRequestException;
+import com.api.blog.unit.util.builders.UserDTOEditRequestBuilder;
+import com.api.blog.unit.util.builders.UserDTOEditResponseBuilder;
 import com.api.blog.unit.util.builders.UserDTORequestBuilder;
 import com.api.blog.unit.util.builders.UserDTOResponseBuilder;
 
@@ -87,6 +91,34 @@ public class UserControllerTests {
         
         UUID userId = UserDTOResponseBuilder.createValidUserDTO().userId;
         ResponseEntity<Object> responseEntity = this.userController.getByUserId(userId.toString());
+
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo("Error: Usuário não encontrado");
+    }
+
+    //  PUT /user/{userId}
+
+    @Test
+    public void esperoQueEditeOUsuarioPeloIdInformado() throws BadRequestException {
+        UserDTOEditResponse userDTOEditResponse = UserDTOEditResponseBuilder.createValidUserDTOEditResponse();
+        BDDMockito.when(userService.edit(ArgumentMatchers.any())).thenReturn(userDTOEditResponse);
+
+        UserDTOEditRequest userDTOEditRequest = UserDTOEditRequestBuilder.createValidUserDTOEditRequest();
+
+        ResponseEntity<Object> responseEntity = this.userController.edit(userDTOEditResponse.userId.toString(), userDTOEditRequest);
+
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOEditResponse);
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDeUsuarioNaoEncontrado() throws BadRequestException {
+        BadRequestException badRequestException = new BadRequestException("Error: Usuário não encontrado");
+        BDDMockito.when(userService.edit(ArgumentMatchers.any())).thenThrow(badRequestException);
+
+        UserDTOEditRequest userDTOEditRequest = UserDTOEditRequestBuilder.createValidUserDTOEditRequest();
+
+        ResponseEntity<Object> responseEntity = this.userController.edit("7f4baffd-96f8-4b5a-b1de-84437519ffc2", userDTOEditRequest);
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         Assertions.assertThat(responseEntity.getBody()).isEqualTo("Error: Usuário não encontrado");
