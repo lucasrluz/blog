@@ -7,15 +7,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.api.blog.dto.UserDTOEditRequest;
 import com.api.blog.dto.UserDTORequest;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.UserRepository;
+import com.api.blog.unit.util.builders.UserDTOEditRequestBuilder;
 import com.api.blog.unit.util.builders.UserDTORequestBuilder;
 import com.api.blog.unit.util.builders.UserModelBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.CoreMatchers.is;
@@ -136,5 +139,30 @@ public class UserControllerTests {
             .perform(get("/user/7f4baffd-96f8-4b5a-b1de-84437519ffc2"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$", is("Error: Usuário não encontrado")));
+    }
+
+    // PUT /user/{userId}
+    @Test
+    public void esperoQueRetorneOUsuarioEditadoPeloIdInformado() throws Exception {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
+
+        UserDTOEditRequest userDTOEditRequest = UserDTOEditRequestBuilder.createValidUserDTOEditRequest();
+
+        String url = "/user/" + saveUserModelResponse.getUserId();
+        
+        this.mockMvc
+            .perform(
+                put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userDTOEditRequest)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.userId", is(saveUserModelResponse.getUserId().toString())))
+            .andExpect(jsonPath("$.newName", is(userDTOEditRequest.newName)))
+            .andExpect(jsonPath("$.email", is(userDTOEditRequest.email)))
+            .andExpect(jsonPath("$.password", is(userDTOEditRequest.password)));
+        
+        this.userRepository.deleteAll();
     }
 }
