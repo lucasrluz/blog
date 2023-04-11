@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.api.blog.domain.UserDomain;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
+import com.api.blog.dto.UserDTOEditRequest;
+import com.api.blog.dto.UserDTOEditResponse;
 import com.api.blog.dto.UserDTORequest;
 import com.api.blog.dto.UserDTOResponse;
 import com.api.blog.model.UserModel;
@@ -53,6 +55,35 @@ public class UserService {
             findUserModelByUserIdResponse.get().getName(),
             findUserModelByUserIdResponse.get().getEmail(),
             findUserModelByUserIdResponse.get().getPassword()
+        );
+    }
+
+    public UserDTOEditResponse edit(UserDTOEditRequest userDTOEditRequest) throws BadRequestException {
+        UUID uuid = UUID.fromString(userDTOEditRequest.userId);
+
+        Optional<UserModel> findUserModelByUserIdResponse = this.userRepository.findById(uuid);
+
+        if (findUserModelByUserIdResponse.isEmpty()) {
+            throw new BadRequestException("Error: Usuário não encontrado");
+        }
+
+        if (
+            !(findUserModelByUserIdResponse.get().getPassword().equals(userDTOEditRequest.password)) || 
+            !(findUserModelByUserIdResponse.get().getEmail().equals(userDTOEditRequest.email))
+            ) {
+            throw new BadRequestException("Error: E-mail ou senha inválida");
+        }
+
+        UserModel newUserModel = findUserModelByUserIdResponse.get();
+        newUserModel.setName(userDTOEditRequest.newName);
+
+        UserModel updateUserModelResponse = this.userRepository.save(newUserModel);
+
+        return new UserDTOEditResponse(
+            updateUserModelResponse.getUserId().toString(),
+            updateUserModelResponse.getName(),
+            updateUserModelResponse.getEmail(),
+            updateUserModelResponse.getPassword()
         );
     }
 }
