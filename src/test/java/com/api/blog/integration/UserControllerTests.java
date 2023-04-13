@@ -142,7 +142,7 @@ public class UserControllerTests {
     }
 
     // PUT /user/{userId}
-    
+
     @Test
     public void esperoQueRetorneOUsuarioEditadoPeloIdInformado() throws Exception {
         UserModel userModel = UserModelBuilder.createValidUserModel();
@@ -163,6 +163,61 @@ public class UserControllerTests {
             .andExpect(jsonPath("$.newName", is(userDTOEditRequest.newName)))
             .andExpect(jsonPath("$.email", is(userDTOEditRequest.email)))
             .andExpect(jsonPath("$.password", is(userDTOEditRequest.password)));
+        
+        this.userRepository.deleteAll();
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDeUsuarioNaoEncontradoPeloIdInformado() throws Exception {
+        UserDTOEditRequest userDTOEditRequest = UserDTOEditRequestBuilder.createValidUserDTOEditRequest();
+        
+        this.mockMvc
+            .perform(
+                put("/user/7f4baffd-96f8-4b5a-b1de-84437519ffc2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userDTOEditRequest)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$", is("Error: Usuário não encontrado")));
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDadoUmaSenhaInvalida() throws Exception {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
+
+        UserDTOEditRequest userDTOEditRequest = UserDTOEditRequestBuilder.createUserDTOEditRequestWithInvalidPassword();
+
+        String url = "/user/" + saveUserModelResponse.getUserId();
+
+        this.mockMvc
+            .perform(
+                put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userDTOEditRequest)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$", is("Error: E-mail ou senha inválida")));
+        
+        this.userRepository.deleteAll();
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDadoUmEmailInvalido() throws Exception {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+        
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
+
+        UserDTOEditRequest userDTOEditRequest = UserDTOEditRequestBuilder.createUserDTOEditRequestWithInvalidEmail();
+
+        String url = "/user/" + saveUserModelResponse.getUserId();
+
+        this.mockMvc
+            .perform(
+                put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(userDTOEditRequest)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$", is("Error: E-mail ou senha inválida")));
         
         this.userRepository.deleteAll();
     }
