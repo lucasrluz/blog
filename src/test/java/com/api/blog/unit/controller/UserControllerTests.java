@@ -36,33 +36,21 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueRetorneUmCodigoDeStatus201EONovoUsuarioCriado() throws InvalidDomainDataException, BadRequestException {
-        UserDTOResponse userDTOResponse = UserDTOResponseBuilder.createValidUserDTO();
-        BDDMockito.when(userService.save(ArgumentMatchers.any())).thenReturn(userDTOResponse);
+        UserDTOResponse userDTOResponseMock = UserDTOResponseBuilder.createValidUserDTO();
+        BDDMockito.when(userService.save(ArgumentMatchers.any())).thenReturn(userDTOResponseMock);
 
         UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
 
         ResponseEntity<Object> responseEntity = this.userController.save(userDTORequest);
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOResponse);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOResponseMock);
     }
 
     @Test
-    public void esperoQueRetorneUmCodigoDeStatus401ComUmaExcecaoDeInvalidDomainException() throws InvalidDomainDataException, BadRequestException {
-        InvalidDomainDataException invalidDomainDataException = new InvalidDomainDataException("name: must not be blank");
-        BDDMockito.when(userService.save(ArgumentMatchers.any())).thenThrow(invalidDomainDataException);
-        
-        UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
-        ResponseEntity<Object> responseEntity = this.userController.save(userDTORequest);
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        Assertions.assertThat(responseEntity.getBody()).isEqualTo("name: must not be blank");
-    }
-
-    @Test
-    public void esperoQueRetorneUmCodigoDeStatus401ComUmaExcecaoBadRequest() throws InvalidDomainDataException, BadRequestException {
-        BadRequestException badRequestException = new BadRequestException("Error: Este e-mail já está cadastrado");
-        BDDMockito.when(userService.save(ArgumentMatchers.any())).thenThrow(badRequestException);
+    public void esperoQueRetorneUmCodigoDeStatus400ComUmaExcecaoBadRequest() throws InvalidDomainDataException, BadRequestException {
+        BadRequestException badRequestExceptionMock = new BadRequestException("Error: Este e-mail já está cadastrado");
+        BDDMockito.when(userService.save(ArgumentMatchers.any())).thenThrow(badRequestExceptionMock);
         
         UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
         ResponseEntity<Object> responseEntity = this.userController.save(userDTORequest);
@@ -74,18 +62,18 @@ public class UserControllerTests {
     // GET /user/{id}
 
     @Test
-    public void esperoQueRetornOUsuarioCorretoPeloId() throws BadRequestException {
-        UserDTOResponse userDTOResponse = UserDTOResponseBuilder.createValidUserDTO();
-        BDDMockito.when(userService.getByUserId(ArgumentMatchers.any())).thenReturn(userDTOResponse);
+    public void esperoQueRetorneOUsuarioPeloIdInformado() throws BadRequestException {
+        UserDTOResponse userDTOResponseMock = UserDTOResponseBuilder.createValidUserDTO();
+        BDDMockito.when(userService.getByUserId(ArgumentMatchers.any())).thenReturn(userDTOResponseMock);
 
-        ResponseEntity<Object> responseEntity = this.userController.getByUserId(userDTOResponse.userId.toString());
+        ResponseEntity<Object> responseEntity = this.userController.getByUserId(userDTOResponseMock.userId.toString());
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOResponse);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOResponseMock);
     }
 
     @Test
-    public void esperoQueRetorneUmCodigoDeStatus401ComUmaExcecaoBadRequestDadoUmIdInvalido() throws InvalidDomainDataException, BadRequestException {
+    public void esperoQueRetorneUmCodigoDeStatus400ComUmaExcecaoBadRequestDadoUmIdInvalido() throws InvalidDomainDataException, BadRequestException {
         BadRequestException badRequestException = new BadRequestException("Error: Usuário não encontrado");
         BDDMockito.when(userService.getByUserId(ArgumentMatchers.any())).thenThrow(badRequestException);
         
@@ -100,21 +88,21 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueEditeOUsuarioPeloIdInformado() throws BadRequestException {
-        UserDTOEditResponse userDTOEditResponse = UserDTOEditResponseBuilder.createValidUserDTOEditResponse();
-        BDDMockito.when(userService.edit(ArgumentMatchers.any())).thenReturn(userDTOEditResponse);
+        UserDTOEditResponse userDTOEditResponseMock = UserDTOEditResponseBuilder.createValidUserDTOEditResponse();
+        BDDMockito.when(userService.edit(ArgumentMatchers.any())).thenReturn(userDTOEditResponseMock);
 
         UserDTOEditRequest userDTOEditRequest = UserDTOEditRequestBuilder.createValidUserDTOEditRequest();
 
-        ResponseEntity<Object> responseEntity = this.userController.edit(userDTOEditResponse.userId.toString(), userDTOEditRequest);
+        ResponseEntity<Object> responseEntity = this.userController.edit(userDTOEditResponseMock.userId.toString(), userDTOEditRequest);
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOEditResponse);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userDTOEditResponseMock);
     }
 
     @Test
     public void esperoQueRetorneUmErroDeUsuarioNaoEncontrado() throws BadRequestException {
-        BadRequestException badRequestException = new BadRequestException("Error: Usuário não encontrado");
-        BDDMockito.when(userService.edit(ArgumentMatchers.any())).thenThrow(badRequestException);
+        BadRequestException badRequestExceptionMock = new BadRequestException("Error: Usuário não encontrado");
+        BDDMockito.when(userService.edit(ArgumentMatchers.any())).thenThrow(badRequestExceptionMock);
 
         UserDTOEditRequest userDTOEditRequest = UserDTOEditRequestBuilder.createValidUserDTOEditRequest();
 

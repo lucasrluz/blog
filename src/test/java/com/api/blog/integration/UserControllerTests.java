@@ -57,7 +57,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void esperoQueRetorneUmCodigoDeStatus401ComUmMensagemDeErroDadoUmNomeInvalido() throws Exception {
+    public void esperoQueRetorneUmCodigoDeStatus400ComUmMensagemDeErroDadoUmNomeInvalido() throws Exception {
         UserDTORequest userDTORequest = UserDTORequestBuilder.createUserDTORequestWithInvalidName();
 
         this.mockMvc.perform(
@@ -69,7 +69,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void esperoQueRetorneUmCodigoDeStatus401ComUmMensagemDeErroDadoUmEmailInvalido() throws Exception {
+    public void esperoQueRetorneUmCodigoDeStatus400ComUmMensagemDeErroDadoUmEmailInvalido() throws Exception {
         UserDTORequest userDTORequest = UserDTORequestBuilder.createUserDTORequestWithInvalidEmail();
 
         this.mockMvc.perform(
@@ -81,7 +81,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void esperoQueRetorneUmCodigoDeStatus401ComUmMensagemDeErroDadoUmaSenhaInvalida() throws Exception {
+    public void esperoQueRetorneUmCodigoDeStatus400ComUmMensagemDeErroDadoUmaSenhaInvalida() throws Exception {
         UserDTORequest userDTORequest = UserDTORequestBuilder.createUserDTORequestWithInvalidPassword();
 
         this.mockMvc.perform(
@@ -93,7 +93,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void esperoQueRetorneUmCodigoDeStatus401ComErroDeEmailJaUtilizado() throws Exception {
+    public void esperoQueRetorneUmCodigoDeStatus400ComErroDeEmailJaUtilizado() throws Exception {
         UserModel userModel = UserModelBuilder.createValidUserModel();
 
         this.userRepository.save(userModel);
@@ -142,6 +142,7 @@ public class UserControllerTests {
     }
 
     // PUT /user/{userId}
+    
     @Test
     public void esperoQueRetorneOUsuarioEditadoPeloIdInformado() throws Exception {
         UserModel userModel = UserModelBuilder.createValidUserModel();
