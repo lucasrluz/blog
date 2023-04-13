@@ -8,4 +8,16 @@ public class UserDTOEditRequestBuilder {
 
         return userDTOEditRequest;
     }
+
+    public static UserDTOEditRequest createUserDTOEditRequestWithInvalidPassword() {
+        UserDTOEditRequest userDTOEditRequest = new UserDTOEditRequest(null, "new test", "nametest@gmail.com", "456");
+
+        return userDTOEditRequest;
+    }
+
+    public static UserDTOEditRequest createUserDTOEditRequestWithInvalidEmail() {
+        UserDTOEditRequest userDTOEditRequest = new UserDTOEditRequest(null, "new test", "otheremail@gmail.com", "123");
+
+        return userDTOEditRequest;
+    }
 }
