@@ -7,7 +7,7 @@ import com.api.blog.dto.UserDTOEditResponse;
 public class UserDTOEditResponseBuilder {
     public static UserDTOEditResponse createValidUserDTOEditResponse() {
         UUID uuid = new UUID(0, 0);
-        UserDTOEditResponse userDTOEditResponse = new UserDTOEditResponse(uuid.toString(), "name test", "nametest@gmail.com", "123");
+        UserDTOEditResponse userDTOEditResponse = new UserDTOEditResponse(uuid.toString(), "foo", "foo@gmail.com", "foo");
         
         return userDTOEditResponse;
     }
