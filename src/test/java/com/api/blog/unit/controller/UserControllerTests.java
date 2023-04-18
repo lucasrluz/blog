@@ -111,4 +111,28 @@ public class UserControllerTests {
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         Assertions.assertThat(responseEntity.getBody()).isEqualTo("Error: Usuário não encontrado");
     }
+
+    // DELETE /{userId}
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus204EOUsuarioSejaDeletado() throws BadRequestException {
+        String userId = "7f4baffd-96f8-4b5a-b1de-84437519ffc2";
+        BDDMockito.when(this.userService.delete(ArgumentMatchers.any())).thenReturn(userId);
+
+        ResponseEntity<Object> responseEntity = this.userController.delete(userId);
+
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo(userId);
+    }
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus404ComUmaMensagemDeErroDeUsuarioNaoEncontrado() throws BadRequestException {
+        BadRequestException badRequestExceptionMock = new BadRequestException("Error: Usuário não encontrado");
+        BDDMockito.when(userService.delete(ArgumentMatchers.any())).thenThrow(badRequestExceptionMock);
+
+        ResponseEntity<Object> responseEntity = this.userController.delete("7f4baffd-96f8-4b5a-b1de-84437519ffc2");
+
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Assertions.assertThat(responseEntity.getBody()).isEqualTo("Error: Usuário não encontrado");
+    }
 }

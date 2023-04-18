@@ -172,4 +172,31 @@ public class UserServiceTests {
             .isThrownBy(() -> userService.edit(userDTOEditRequest))
             .withMessage("Error: E-mail ou senha inválida");
     }
+
+    // userService.delete
+
+    @Test
+    public void esperoQueOUsuarioSejaDeletadoPeloIdInformado() throws BadRequestException {
+        UserModel userModelMock = UserModelBuilder.createValidUserModel();
+        Optional<UserModel> userOptional = Optional.of(userModelMock);
+        BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
+        
+        String uuid = new UUID(0, 0).toString();
+        
+        String response = this.userService.delete(uuid);
+
+        Assertions.assertThat(response).isEqualTo(uuid);
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDeUsuarioNaoEncontradoDadoUmIdDeUsuarioInvalido() throws BadRequestException {
+        Optional<UserModel> userOptional = Optional.empty();
+        BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
+        
+        String uuid = new UUID(0, 0).toString();
+        
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+            .isThrownBy(() -> this.userService.delete(uuid))
+            .withMessage("Error: Usuário não encontrado");
+    }
 }
