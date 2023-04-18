@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.CoreMatchers.is;
@@ -220,5 +221,31 @@ public class UserControllerTests {
             .andExpect(jsonPath("$", is("Error: E-mail ou senha inválida")));
         
         this.userRepository.deleteAll();
+    }
+
+    // DELETE /user/{userId}
+
+    @Test
+    public void esperoQueOUsuarioSejaDeletadoPeloIdInformado() throws Exception {
+        UserModel userModel = UserModelBuilder.createValidUserModel();
+
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
+
+        String url = "/user/" + saveUserModelResponse.getUserId();
+
+        this.mockMvc
+            .perform(delete(url))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is(saveUserModelResponse.getUserId().toString())));
+        
+        this.userRepository.deleteAll();
+    }
+
+    @Test
+    public void esperoQueRetoneCodigoDeStatus404ComUmaMensagemDeUsuarioNaoEncontrado() throws Exception {
+        this.mockMvc
+            .perform(delete("/user/7f4baffd-96f8-4b5a-b1de-84437519ffc2"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", is("Error: Usuário não encontrado")));
     }
 }
