@@ -86,4 +86,18 @@ public class UserService {
             updateUserModelResponse.getPassword()
         );
     }
+
+    public String delete(String userId) throws BadRequestException {
+        UUID uuid = UUID.fromString(userId);
+
+        Optional<UserModel> findUserModelByUserIdResponse = this.userRepository.findById(uuid);
+
+        if (findUserModelByUserIdResponse.isEmpty()) {
+            throw new BadRequestException("Error: Usuário não encontrado");
+        }
+
+        this.userRepository.deleteById(uuid);
+
+        return userId;
+    }
 }
