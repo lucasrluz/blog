@@ -17,19 +17,15 @@ public class PostDomain {
 
     @NotBlank
     private String content;
-    
-    @NotBlank
-    private String userId;
 
-    private PostDomain(@NotBlank String title, @NotBlank String content, @NotBlank String userId) {
+    private PostDomain(@NotBlank String title, @NotBlank String content) {
         this.title = title;
         this.content = content;
-        this.userId = userId;
     }
 
-    public static PostDomain validate(String title, String content, String userId) throws InvalidDomainDataException {
+    public static PostDomain validate(String title, String content) throws InvalidDomainDataException {
         try {
-            PostDomain postDomain = new PostDomain(title, content, userId);
+            PostDomain postDomain = new PostDomain(title, content);
             
             validation(postDomain);
 
@@ -66,15 +62,5 @@ public class PostDomain {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    
+    }    
 }
