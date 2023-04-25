@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.api.blog.domain.PostDomain;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
+import com.api.blog.dto.postDTO.PostDTOEditResponse;
 import com.api.blog.dto.postDTO.PostDTORequest;
 import com.api.blog.model.PostModel;
 import com.api.blog.model.UserModel;
@@ -40,5 +41,30 @@ public class PostService {
         PostModel savePostModel = this.postRepository.save(postModel);
 
         return savePostModel.getPostId().toString();
+    }
+
+    public PostDTOEditResponse edit(String postId, PostDTORequest postDTORequest) throws BadRequestException, InvalidDomainDataException {
+        PostDomain.validate(postDTORequest.title, postDTORequest.content);
+        
+        UUID uuidPostId = UUID.fromString(postId);
+
+        Optional<PostModel> findPostByPostIdResponse = this.postRepository.findById(uuidPostId);
+
+        if (!findPostByPostIdResponse.isPresent()) {
+            throw new BadRequestException("Error: Post não encontrado");
+        }
+
+        PostModel postModel = findPostByPostIdResponse.get();
+
+        postModel.setTitle(postDTORequest.title);
+        postModel.setContent(postDTORequest.content);
+
+        PostModel response = this.postRepository.save(postModel);
+
+        return new PostDTOEditResponse(
+            response.getPostId().toString(),
+            response.getTitle(),
+            response.getContent()
+        );
     }
 }

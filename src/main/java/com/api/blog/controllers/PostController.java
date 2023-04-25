@@ -4,11 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
+import com.api.blog.dto.postDTO.PostDTOEditResponse;
 import com.api.blog.dto.postDTO.PostDTORequest;
 import com.api.blog.services.PostService;
 import com.api.blog.services.util.BadRequestException;
@@ -32,6 +34,17 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(badRequestException.getMessage());
         } catch (InvalidDomainDataException invalidDomainDataException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(invalidDomainDataException.getMessage());
+        }
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<Object> edit(@PathVariable String postId, @RequestBody PostDTORequest postDTORequest) {
+        try {
+            PostDTOEditResponse postDTOEditResponse = this.postService.edit(postId, postDTORequest);
+
+            return ResponseEntity.status(HttpStatus.OK).body(postDTOEditResponse);
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
         }
     }
 }
