@@ -15,9 +15,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.api.blog.controllers.PostController;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
+import com.api.blog.dto.postDTO.PostDTOEditResponse;
 import com.api.blog.dto.postDTO.PostDTORequest;
 import com.api.blog.services.PostService;
 import com.api.blog.services.util.BadRequestException;
+import com.api.blog.unit.util.builders.PostDTOEditResponseBuilder;
 import com.api.blog.unit.util.builders.PostDTORequestBuilder;
 
 @ExtendWith(SpringExtension.class)
@@ -71,5 +73,37 @@ public class PostControllerTests {
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         Assertions.assertThat(response.getBody()).isEqualTo("title: must not be a blank");
+    }
+
+    // PUT /post/{postId}
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus200ComDadosDoPost() throws BadRequestException, InvalidDomainDataException {
+        PostDTOEditResponse postDTOEditResponseMock = PostDTOEditResponseBuilder.createValidPostDTOEditResponse();
+        BDDMockito.when(this.postService.edit(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(postDTOEditResponseMock);
+
+        String postId = postDTOEditResponseMock.postId;
+
+        PostDTORequest postDTORequest = PostDTORequestBuilder.createValidPostDTORequest();
+
+        ResponseEntity<Object> response = this.postController.edit(postId, postDTORequest);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody()).isEqualTo(postDTOEditResponseMock);
+    }
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus404EUmErroDePostNaoEncontrado() throws BadRequestException, InvalidDomainDataException {
+        BadRequestException badRequestExceptionMock = new BadRequestException("Error: Post não encontrado");
+        BDDMockito.when(this.postService.edit(ArgumentMatchers.any(), ArgumentMatchers.any())).thenThrow(badRequestExceptionMock);
+
+        String postId = new UUID(0, 0).toString();
+
+        PostDTORequest postDTORequest = PostDTORequestBuilder.createValidPostDTORequest();
+
+        ResponseEntity<Object> response = this.postController.edit(postId, postDTORequest);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Assertions.assertThat(response.getBody()).isEqualTo("Error: Post não encontrado");
     }
 }
