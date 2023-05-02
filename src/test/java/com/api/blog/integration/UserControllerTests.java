@@ -9,11 +9,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.api.blog.dto.UserDTOEditRequest;
 import com.api.blog.dto.UserDTORequest;
+import com.api.blog.integration.util.UserModelBuilderIntegrationTests;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.UserRepository;
 import com.api.blog.unit.util.builders.UserDTOEditRequestBuilder;
 import com.api.blog.unit.util.builders.UserDTORequestBuilder;
-import com.api.blog.unit.util.builders.UserModelBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -95,7 +95,7 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueRetorneUmCodigoDeStatus400ComErroDeEmailJaUtilizado() throws Exception {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
 
         this.userRepository.save(userModel);
         
@@ -115,7 +115,7 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueRetorneUmUsuarioDeAcordoComOIdPassado() throws Exception {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
 
         UserModel saveUserModelResponse = this.userRepository.save(userModel);
 
@@ -146,7 +146,7 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueRetorneOUsuarioEditadoPeloIdInformado() throws Exception {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
         
         UserModel saveUserModelResponse = this.userRepository.save(userModel);
 
@@ -183,7 +183,7 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueRetorneUmErroDadoUmaSenhaInvalida() throws Exception {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
         
         UserModel saveUserModelResponse = this.userRepository.save(userModel);
 
@@ -204,7 +204,7 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueRetorneUmErroDadoUmEmailInvalido() throws Exception {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
         
         UserModel saveUserModelResponse = this.userRepository.save(userModel);
 
@@ -227,7 +227,7 @@ public class UserControllerTests {
 
     @Test
     public void esperoQueOUsuarioSejaDeletadoPeloIdInformado() throws Exception {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
 
         UserModel saveUserModelResponse = this.userRepository.save(userModel);
 

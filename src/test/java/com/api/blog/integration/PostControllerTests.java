@@ -17,13 +17,13 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.is;
 
 import com.api.blog.dto.postDTO.PostDTORequest;
+import com.api.blog.integration.util.UserModelBuilderIntegrationTests;
 import com.api.blog.model.PostModel;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.PostRepository;
 import com.api.blog.repositories.UserRepository;
 import com.api.blog.unit.util.builders.PostDTORequestBuilder;
 import com.api.blog.unit.util.builders.PostModelBuilder;
-import com.api.blog.unit.util.builders.UserModelBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -48,11 +48,12 @@ public class PostControllerTests {
 
     @Test
     public void esperoQueRetorneUmCodigoDeStatus201EOIdDoNovoPostCriado() throws Exception {
-        UserModel userModel = this.userRepository.save(new UserModel("foo", "foo@gmail.com", "foo"));
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
 
         PostDTORequest postDTORequest = PostDTORequestBuilder.createValidPostDTORequest();
 
-        String url = "/post/" + userModel.getUserId().toString();
+        String url = "/post/" + saveUserModelResponse.getUserId().toString();
 
         this.mockMvc.perform(
             post(url)
@@ -67,11 +68,12 @@ public class PostControllerTests {
 
     @Test
     public void esperoQueRetorneRetorneUmCodigoDeStatus400EUmErroDeTituloInvalido() throws Exception {
-        UserModel userModel = this.userRepository.save(new UserModel("foo", "foo@gmail.com", "foo"));
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
         
         PostDTORequest postDTORequest = PostDTORequestBuilder.createPostDTORequestWithInvalidTitle();
 
-        String url = "/post/" + userModel.getUserId().toString();
+        String url = "/post/" + saveUserModelResponse.getUserId().toString();
 
         this.mockMvc.perform(
             post(url)
@@ -85,11 +87,12 @@ public class PostControllerTests {
 
     @Test
     public void esperoQueRetorneRetorneUmCodigoDeStatus400EUmErroDeConteudoInvalido() throws Exception {
-        UserModel userModel = this.userRepository.save(new UserModel("foo", "foo@gmail.com", "foo"));
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
         
         PostDTORequest postDTORequest = PostDTORequestBuilder.createPostDTORequestWithInvalidContent();
 
-        String url = "/post/" + userModel.getUserId().toString();
+        String url = "/post/" + saveUserModelResponse.getUserId().toString();
 
         this.mockMvc.perform(
             post(url)
@@ -118,7 +121,7 @@ public class PostControllerTests {
     // PUT /post/{postId}
     @Test
     public void esperoQueEditeOTituloDoPost() throws Exception {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
         UserModel saveUserModelResponse = this.userRepository.save(userModel);
 
         PostModel postModel = PostModelBuilder.createValidPostModel();
