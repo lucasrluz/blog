@@ -21,9 +21,9 @@ import com.api.blog.repositories.PostRepository;
 import com.api.blog.repositories.UserRepository;
 import com.api.blog.services.PostService;
 import com.api.blog.services.util.BadRequestException;
-import com.api.blog.unit.util.builders.PostDTORequestBuilder;
-import com.api.blog.unit.util.builders.PostModelResponseBuilder;
-import com.api.blog.unit.util.builders.UserModelBuilderUnitTests;
+import com.api.blog.unit.util.builders.postDTO.PostDTORequestBuilder;
+import com.api.blog.unit.util.builders.postModel.PostModelResponseBuilder;
+import com.api.blog.unit.util.builders.userModel.UserModelBuilderUnitTests;
 
 @ExtendWith(SpringExtension.class)
 public class PostServiceTests {

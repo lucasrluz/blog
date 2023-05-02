@@ -1,4 +1,4 @@
-package com.api.blog.unit.util.builders;
+package com.api.blog.unit.util.builders.postDTO;
 
 import com.api.blog.dto.postDTO.PostDTORequest;
 

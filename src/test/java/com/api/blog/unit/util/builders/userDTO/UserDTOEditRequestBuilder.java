@@ -1,4 +1,4 @@
-package com.api.blog.unit.util.builders;
+package com.api.blog.unit.util.builders.userDTO;
 
 import com.api.blog.dto.UserDTOEditRequest;
 

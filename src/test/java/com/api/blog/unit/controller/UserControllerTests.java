@@ -21,10 +21,10 @@ import com.api.blog.dto.UserDTORequest;
 import com.api.blog.dto.UserDTOResponse;
 import com.api.blog.services.UserService;
 import com.api.blog.services.util.BadRequestException;
-import com.api.blog.unit.util.builders.UserDTOEditRequestBuilder;
-import com.api.blog.unit.util.builders.UserDTOEditResponseBuilder;
-import com.api.blog.unit.util.builders.UserDTORequestBuilder;
-import com.api.blog.unit.util.builders.UserDTOResponseBuilder;
+import com.api.blog.unit.util.builders.userDTO.UserDTOEditRequestBuilder;
+import com.api.blog.unit.util.builders.userDTO.UserDTOEditResponseBuilder;
+import com.api.blog.unit.util.builders.userDTO.UserDTORequestBuilder;
+import com.api.blog.unit.util.builders.userDTO.UserDTOResponseBuilder;
 
 @ExtendWith(SpringExtension.class)
 public class UserControllerTests {
