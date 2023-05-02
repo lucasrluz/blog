@@ -23,7 +23,7 @@ import com.api.blog.services.PostService;
 import com.api.blog.services.util.BadRequestException;
 import com.api.blog.unit.util.builders.PostDTORequestBuilder;
 import com.api.blog.unit.util.builders.PostModelResponseBuilder;
-import com.api.blog.unit.util.builders.UserModelBuilder;
+import com.api.blog.unit.util.builders.UserModelBuilderUnitTests;
 
 @ExtendWith(SpringExtension.class)
 public class PostServiceTests {
@@ -38,7 +38,7 @@ public class PostServiceTests {
 
     @Test
     public void esperoQueCrieUmPostComSucesso() throws BadRequestException, InvalidDomainDataException {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderUnitTests.createValidUserModel();
         Optional<UserModel> optionalUserModel = Optional.of(userModel);
         BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(optionalUserModel);
         

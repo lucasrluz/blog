@@ -7,7 +7,7 @@ import com.api.blog.model.UserModel;
 
 public class PostModelResponseBuilder {
     public static PostModel createValidPostModelResponse() {
-        UserModel userModel = UserModelBuilder.createValidUserModel();
+        UserModel userModel = UserModelBuilderUnitTests.createValidUserModel();
 
         PostModel postModel = new PostModel("foo", "foo", userModel);
 

@@ -22,7 +22,7 @@ import com.api.blog.repositories.UserRepository;
 import com.api.blog.services.UserService;
 import com.api.blog.services.util.BadRequestException;
 import com.api.blog.unit.util.builders.UserDTORequestBuilder;
-import com.api.blog.unit.util.builders.UserModelBuilder;
+import com.api.blog.unit.util.builders.UserModelBuilderUnitTests;
 
 @ExtendWith(SpringExtension.class)
 public class UserServiceTests {
@@ -36,7 +36,7 @@ public class UserServiceTests {
     public void esperoQueRetorneOUsuarioSalvo() throws InvalidDomainDataException, BadRequestException {
         BDDMockito.when(userRepository.existsByEmail(ArgumentMatchers.any())).thenReturn(false);
 
-        UserModel userModelMock = UserModelBuilder.createValidUserModel();
+        UserModel userModelMock = UserModelBuilderUnitTests.createValidUserModel();
         BDDMockito.when(userRepository.save(ArgumentMatchers.any())).thenReturn(userModelMock);
     
         UserDTORequest userDTORequest = UserDTORequestBuilder.createValidUserDTORequest();
@@ -63,7 +63,7 @@ public class UserServiceTests {
 
     @Test
     public void esperoQueRetorneUmUsuarioPeloIdInformado() throws BadRequestException {
-        UserModel userModelMock = UserModelBuilder.createValidUserModel();
+        UserModel userModelMock = UserModelBuilderUnitTests.createValidUserModel();
         Optional<UserModel> userOptionalMock = Optional.of(userModelMock);
         BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptionalMock);
 
@@ -93,12 +93,12 @@ public class UserServiceTests {
 
     @Test
     public void esperoQueEditeONomeDoUsuarioPeloIdInformado() throws BadRequestException {
-        UserModel userModelMockFindById = UserModelBuilder.createValidUserModel();
+        UserModel userModelMockFindById = UserModelBuilderUnitTests.createValidUserModel();
         Optional<UserModel> userOptionalMock = Optional.of(userModelMockFindById);
         
         BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptionalMock);
 
-        UserModel userModelMockInSave = UserModelBuilder.createValidUserModel();
+        UserModel userModelMockInSave = UserModelBuilderUnitTests.createValidUserModel();
         userModelMockInSave.setName("new name");
 
         BDDMockito.when(this.userRepository.save(ArgumentMatchers.any())).thenReturn(userModelMockInSave);
@@ -120,7 +120,7 @@ public class UserServiceTests {
 
     @Test
     public void esperoQueRetorneUmErroDeUsuarioNaoEncontradoDadoUmIdInvalido() throws BadRequestException {
-        UserModel userModelMockFindById = UserModelBuilder.createValidUserModel();
+        UserModel userModelMockFindById = UserModelBuilderUnitTests.createValidUserModel();
         Optional<UserModel> userOptionalMock = Optional.empty();
         
         BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptionalMock);
@@ -139,7 +139,7 @@ public class UserServiceTests {
 
     @Test
     public void esperoQueRetorneUmErroDeEmailOuSenhaInvalidaDadoUmaSenhaInvalida() throws BadRequestException {
-        UserModel userModelMockFindById = UserModelBuilder.createValidUserModel();
+        UserModel userModelMockFindById = UserModelBuilderUnitTests.createValidUserModel();
         Optional<UserModel> userOptionalMock = Optional.of(userModelMockFindById);
         BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptionalMock);
 
@@ -157,7 +157,7 @@ public class UserServiceTests {
 
     @Test
     public void esperoQueRetorneUmErroDeEmailOuSenhaInvalidaDadoUmEmailInvalido() throws BadRequestException {
-        UserModel userModelMock = UserModelBuilder.createValidUserModel();
+        UserModel userModelMock = UserModelBuilderUnitTests.createValidUserModel();
         Optional<UserModel> userOptional = Optional.of(userModelMock);
         BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
 
@@ -177,7 +177,7 @@ public class UserServiceTests {
 
     @Test
     public void esperoQueOUsuarioSejaDeletadoPeloIdInformado() throws BadRequestException {
-        UserModel userModelMock = UserModelBuilder.createValidUserModel();
+        UserModel userModelMock = UserModelBuilderUnitTests.createValidUserModel();
         Optional<UserModel> userOptional = Optional.of(userModelMock);
         BDDMockito.when(this.userRepository.findById(ArgumentMatchers.any())).thenReturn(userOptional);
         
