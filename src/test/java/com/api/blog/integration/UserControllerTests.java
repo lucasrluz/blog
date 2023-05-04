@@ -12,8 +12,8 @@ import com.api.blog.dto.UserDTORequest;
 import com.api.blog.integration.util.UserModelBuilderIntegrationTests;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.UserRepository;
-import com.api.blog.unit.util.builders.userDTO.UserDTOEditRequestBuilder;
-import com.api.blog.unit.util.builders.userDTO.UserDTORequestBuilder;
+import com.api.blog.utils.builders.userDTO.UserDTOEditRequestBuilder;
+import com.api.blog.utils.builders.userDTO.UserDTORequestBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

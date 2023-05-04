@@ -19,8 +19,8 @@ import com.api.blog.dto.postDTO.PostDTOEditResponse;
 import com.api.blog.dto.postDTO.PostDTORequest;
 import com.api.blog.services.PostService;
 import com.api.blog.services.util.BadRequestException;
-import com.api.blog.unit.util.builders.postDTO.PostDTOEditResponseBuilder;
-import com.api.blog.unit.util.builders.postDTO.PostDTORequestBuilder;
+import com.api.blog.utils.builders.postDTO.PostDTOEditResponseBuilder;
+import com.api.blog.utils.builders.postDTO.PostDTORequestBuilder;
 
 @ExtendWith(SpringExtension.class)
 public class PostControllerTests {

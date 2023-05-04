@@ -22,7 +22,7 @@ import com.api.blog.model.PostModel;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.PostRepository;
 import com.api.blog.repositories.UserRepository;
-import com.api.blog.unit.util.builders.postDTO.PostDTORequestBuilder;
+import com.api.blog.utils.builders.postDTO.PostDTORequestBuilder;
 import com.api.blog.unit.util.builders.postModel.PostModelBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

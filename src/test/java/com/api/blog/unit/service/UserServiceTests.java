@@ -21,7 +21,7 @@ import com.api.blog.model.UserModel;
 import com.api.blog.repositories.UserRepository;
 import com.api.blog.services.UserService;
 import com.api.blog.services.util.BadRequestException;
-import com.api.blog.unit.util.builders.userDTO.UserDTORequestBuilder;
+import com.api.blog.utils.builders.userDTO.UserDTORequestBuilder;
 import com.api.blog.unit.util.builders.userModel.UserModelBuilderUnitTests;
 
 @ExtendWith(SpringExtension.class)

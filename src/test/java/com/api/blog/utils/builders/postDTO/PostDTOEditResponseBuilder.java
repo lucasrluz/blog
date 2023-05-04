@@ -1,4 +1,4 @@
-package com.api.blog.unit.util.builders.postDTO;
+package com.api.blog.utils.builders.postDTO;
 
 import java.util.UUID;
 
