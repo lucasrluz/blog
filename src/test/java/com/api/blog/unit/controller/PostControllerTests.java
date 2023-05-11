@@ -17,10 +17,12 @@ import com.api.blog.controllers.PostController;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
 import com.api.blog.dto.postDTO.PostDTOEditResponse;
 import com.api.blog.dto.postDTO.PostDTORequest;
+import com.api.blog.dto.postDTO.PostDTOResponse;
 import com.api.blog.services.PostService;
 import com.api.blog.services.util.BadRequestException;
 import com.api.blog.utils.builders.postDTO.PostDTOEditResponseBuilder;
 import com.api.blog.utils.builders.postDTO.PostDTORequestBuilder;
+import com.api.blog.utils.builders.postDTO.PostDTOResponseBuilder;
 
 @ExtendWith(SpringExtension.class)
 public class PostControllerTests {
@@ -102,6 +104,30 @@ public class PostControllerTests {
         PostDTORequest postDTORequest = PostDTORequestBuilder.createValidPostDTORequest();
 
         ResponseEntity<Object> response = this.postController.edit(postId, postDTORequest);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        Assertions.assertThat(response.getBody()).isEqualTo("Error: Post não encontrado");
+    }
+
+    // GET /post/{postId}
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus200EOsDadosDoPostPeloIdInformado() throws BadRequestException {
+        PostDTOResponse postDTOResponseMock = PostDTOResponseBuilder.createValidPostDTOResponse();
+        BDDMockito.when(this.postService.getByPostId(ArgumentMatchers.any())).thenReturn(postDTOResponseMock);
+
+        ResponseEntity<Object> response = this.postController.getByPostId(postDTOResponseMock.postId);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody()).isEqualTo(postDTOResponseMock);
+    }
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus404ComUmaMensagemDePostNaoEncontrado() throws BadRequestException {
+        BadRequestException badRequestExceptionMock = new BadRequestException("Error: Post não encontrado");
+        BDDMockito.when(this.postService.getByPostId(ArgumentMatchers.any())).thenThrow(badRequestExceptionMock);
+
+        ResponseEntity<Object> response = this.postController.getByPostId(UUID.randomUUID().toString());
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         Assertions.assertThat(response.getBody()).isEqualTo("Error: Post não encontrado");

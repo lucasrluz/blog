@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
 import com.api.blog.dto.postDTO.PostDTOEditResponse;
 import com.api.blog.dto.postDTO.PostDTORequest;
+import com.api.blog.dto.postDTO.PostDTOResponse;
 import com.api.blog.model.PostModel;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.PostRepository;
@@ -100,6 +101,32 @@ public class PostServiceTests {
     
         Assertions.assertThatExceptionOfType(BadRequestException.class)
             .isThrownBy(() -> this.postService.edit(postModelMock.getPostId().toString(), postDTORequest))
+            .withMessage("Error: Post não encontrado");
+    }
+
+    // getByPostId
+
+    @Test
+    public void esperoQueRetorneUmPostPeloIdInformado() throws BadRequestException {
+        PostModel postModelMock = PostModelResponseBuilder.createValidPostModelResponse();
+        Optional<PostModel> postModelOptionalMock = Optional.of(postModelMock);
+        BDDMockito.when(this.postRepository.findById(ArgumentMatchers.any())).thenReturn(postModelOptionalMock);
+
+        PostDTOResponse postDTOResponse = this.postService.getByPostId(postModelMock.getPostId().toString());
+
+        Assertions.assertThat(postDTOResponse.postId).isEqualTo(postModelMock.getPostId().toString());
+        Assertions.assertThat(postDTOResponse.userId).isEqualTo(postModelMock.getUserModel().getUserId().toString());
+        Assertions.assertThat(postDTOResponse.title).isEqualTo(postModelMock.getTitle());
+        Assertions.assertThat(postDTOResponse.content).isEqualTo(postModelMock.getContent());
+    }
+
+    @Test
+    public void esperoQueRetorneUmErroDePostNaoEncontradoDadoUmIdInvalido() {
+        Optional<PostModel> optionalPostModelMock = Optional.empty();
+        BDDMockito.when(this.postRepository.findById(ArgumentMatchers.any())).thenReturn(optionalPostModelMock);
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+            .isThrownBy(() -> this.postService.getByPostId(UUID.randomUUID().toString()))
             .withMessage("Error: Post não encontrado");
     }
 }
