@@ -9,6 +9,7 @@ import com.api.blog.domain.PostDomain;
 import com.api.blog.domain.exceptions.InvalidDomainDataException;
 import com.api.blog.dto.postDTO.PostDTOEditResponse;
 import com.api.blog.dto.postDTO.PostDTORequest;
+import com.api.blog.dto.postDTO.PostDTOResponse;
 import com.api.blog.model.PostModel;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.PostRepository;
@@ -65,6 +66,23 @@ public class PostService {
             response.getPostId().toString(),
             response.getTitle(),
             response.getContent()
+        );
+    }
+
+    public PostDTOResponse getByPostId(String postId) throws BadRequestException {
+        UUID uuid = UUID.fromString(postId);
+
+        Optional<PostModel> posts = this.postRepository.findById(uuid);
+
+        if (!posts.isPresent()) {
+            throw new BadRequestException("Error: Post não encontrado");
+        }
+
+        return new PostDTOResponse(
+            posts.get().getPostId().toString(),
+            posts.get().getUserModel().getUserId().toString(),
+            posts.get().getTitle(),
+            posts.get().getContent()
         );
     }
 }
