@@ -1,8 +1,8 @@
-package com.api.blog.unit.util.builders.postModel;
+package com.api.blog.integration.util;
 
 import com.api.blog.model.PostModel;
 
-public class PostModelBuilder {
+public class PostModelBuilderIntegrationTests {
     public static PostModel createValidPostModel() {
         PostModel postModel = new PostModel("foo", "foo", null);
 
