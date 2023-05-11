@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,13 +18,13 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.is;
 
 import com.api.blog.dto.postDTO.PostDTORequest;
+import com.api.blog.integration.util.PostModelBuilderIntegrationTests;
 import com.api.blog.integration.util.UserModelBuilderIntegrationTests;
 import com.api.blog.model.PostModel;
 import com.api.blog.model.UserModel;
 import com.api.blog.repositories.PostRepository;
 import com.api.blog.repositories.UserRepository;
 import com.api.blog.utils.builders.postDTO.PostDTORequestBuilder;
-import com.api.blog.unit.util.builders.postModel.PostModelBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -124,7 +125,7 @@ public class PostControllerTests {
         UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
         UserModel saveUserModelResponse = this.userRepository.save(userModel);
 
-        PostModel postModel = PostModelBuilder.createValidPostModel();
+        PostModel postModel = PostModelBuilderIntegrationTests.createValidPostModel();
         postModel.setUserModel(saveUserModelResponse);
 
         PostModel savePostModelResponse = this.postRepository.save(postModel);
@@ -158,6 +159,41 @@ public class PostControllerTests {
             put(url)
             .contentType("application/json")
             .content(asJsonString(postDTORequest)))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$", is("Error: Post não encontrado")));
+    }
+
+    // GET /post/{postId}
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus200EOsDadosDoPostPeloIdInformado() throws Exception {
+        UserModel userModel = UserModelBuilderIntegrationTests.createValidUserModel();
+        UserModel saveUserModelResponse = this.userRepository.save(userModel);
+
+        PostModel postModel = PostModelBuilderIntegrationTests.createValidPostModel();
+        postModel.setUserModel(saveUserModelResponse);
+        PostModel savePostModelResponse = this.postRepository.save(postModel);
+
+        String url = "/post/" + savePostModelResponse.getPostId().toString();
+
+        this.mockMvc.perform(
+            get(url))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.postId", is(savePostModelResponse.getPostId().toString())))
+            .andExpect(jsonPath("$.userId", is(savePostModelResponse.getUserModel().getUserId().toString())))
+            .andExpect(jsonPath("$.title", is(savePostModelResponse.getTitle())))
+            .andExpect(jsonPath("$.content", is(savePostModelResponse.getContent())));
+    
+        this.postRepository.deleteAll();
+        this.userRepository.deleteAll();
+    }
+
+    @Test
+    public void esperoQueRetorneUmCodigoDeStatus404ComUmErroDePostNaoEncontrado() throws Exception {
+        String url = "/post/" + UUID.randomUUID().toString();
+
+        this.mockMvc.perform(
+            get(url))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$", is("Error: Post não encontrado")));
     }
